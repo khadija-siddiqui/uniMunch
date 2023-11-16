@@ -25,7 +25,7 @@ select {
 h1 {
     margin: 20px;
     font-size: 25px;
-    color: rgb(16, 35, 48);
+    color: rgb(2, 51, 84);
 }
 
 .page-header {
@@ -35,18 +35,31 @@ h1 {
     text-align: center;
 }
 
-form {
-    display: flex;
-    align-items: center;
+form.formSearch {
+    display: center;
+    align-items: flex;
+}
+
+input[type=text] {
+    padding: 8px;
+    width: 80%;
+    max-width: 450px; /*makes the width long of input search*/
+    border-radius: 30px; /*controls the curve*/
+    border: 1px solid #ccc; 
+    outline: none; /*removes the outline*/
+}
+
+label[for=filter] {
+    margin-right: 10px;
 }
 
 button.search-b {
     padding: 6px;
     cursor: pointer;
     border-radius: 15px;
-    border: 1px solid rgb(69, 69, 121); 
-    margin-left: 5px;
+    border: 1px solid #ccc; 
+    margin-left: 3px;
+    outline: none;
 }
-
 
 
