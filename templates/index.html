@@ -18,9 +18,14 @@
     </form>
   </header>
 
+  <header class = "review-b">
+    <a href = "/create_revpg"><button class = "submit-rev" type = "submit">Write a Review</button></a> <!--write review button--> 
+  </header>
+
   <form class="filterForm" method="POST" action="/add"> 
     <label for="filter">Filter:</label>
     <select id="filter" name="filter">
+      <!--<option value="Filter">Filter</option>-->
       <option value="Halal">Halal</option>
       <option value="Vegan/Vegetarian">Vegan/Vegetarian</option>
       <option value="Gluten-free">Gluten-free</option>
@@ -46,6 +51,17 @@
     </select>
 
   </form>
+
+  <h2>All Reviews:</h2>
+  <ul>
+    {% for review in reviews %}
+      <li>
+        Stars: {{review.stars}} <br>
+        Meal Type: {{review.meal_type}} <br>
+        Opinion: {{reviews.opinion}} <br>
+      </li>
+      {% endfor %}
+  </ul>
      
 </body>
 

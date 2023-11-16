@@ -29,11 +29,16 @@ h1 {
 
 .page-header {
     /*background-color: #211f1f;*/
-    color: rgb(255,255,255);
+    color: rgb(255, 255, 255);
     padding: 10px;
     text-align: center;
 }
 
+.review-b{
+    color:rgb(255, 255, 255);
+    text-align: center;
+    outline: none;
+}
 form.formSearch {
     display: center;
     align-items: flex;
@@ -42,14 +47,15 @@ form.formSearch {
 input[type=text] {
     padding: 8px;
     width: 80%;
-    max-width: 450px;  /*makes the width long of input search*/
+    max-width: 410px;  /*makes the width long of input search*/
     border-radius: 30px;  /*controls the curve*/
     border: 1px solid #ccc; 
     outline: none;  /*removes the outline*/
 }
 
 label[for=filter] {
-    margin-right: 10px; /* Adjusts to create desired space between word Filter: and options*/
+    margin-right: 7px; /* Adjusts to create desired space between word Filter: and options*/
+    padding: 8px;
 }
 
 form.filterForm {
@@ -70,10 +76,27 @@ select[id=filter]{
 button.search-b {
     padding: 6px;
     cursor: pointer;
-    border-radius: 15px;
+    border-radius: 13px;
     border: 1px solid #ccc; 
     margin-left: 3px;
     outline: none;
 }
+
+button.submit-rev {
+    padding: 6px;
+    cursor: pointer;
+    border-radius: 13px;
+    border: 1px solid #fffcfc00; 
+    margin-left: 3px;
+    outline: none;
+    background: white;
+    font-family: Helvetica, sans-serif;
+}
+
+h2{
+    font-family: Georgia; 
+    margin-left: 10px;
+}
+
 
 
