@@ -1,6 +1,21 @@
 body { 
     font-family: Verdana;
-    margin: 20px;
-    background-color: rgb(251, 204, 170); 
+    margin: 70px;
+    background-color: rgb(236, 220, 208); 
 }
 
+/* Select Styles (Filter Bar) */
+select {
+    width: 100%;
+    padding: 12px; /* Increase padding for better touch interaction */
+    margin-bottom: 16px;
+    border: 2px solid #010b2e; /* Update border for better visibility */
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: #f9f9f9;
+    color: #333;
+    font-size: 16px; /* Slightly increase font size for better readability */
+    outline: none;
+    transition: border-color 0.3s ease;
+  }
+  

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>uniMunch</title>
-  <link rel="stylessheet" href = "../static/styles.css">
+  <link rel= "stylesheet" href = "../static/styles.css">
 </head>
 
 <body>
@@ -14,6 +14,33 @@
 
   <form method="POST" action="/add">
     <p>Name of new computer scientist: <input type="text" name="name"> <input type="submit" value="Add"></p>
+    <label for="filter">Filter:</label>
+    <select id="filter" name="filter">
+      <option value="Halal">Halal</option>
+      <option value="Vegan/Vegetarian">Vegan/Vegetarian</option>
+      <option value="Gluten-free">Gluten-free</option>
+      <option value="Kosher">Kosher</option>
+      <option value="Dairy-Free">Dairy-Free</option>
+      <option value="Breakfast">Breakfast</option>
+      <option value="Lunch">Lunch</option>
+      <option value="Dinner">Dinner</option>
+      <option value="Most Popular">Most Popular</option>
+      <optgroup label="Most Popular">
+        <option value="Barnard College">Barnard College</option>
+        <option value="Columbia College">Columbia College</option>
+        <option value="SEAS College">SEAS College</option>
+        <option value="Teacher's College">Teacher's College</option>
+        <option value="School of Social Work">School of Social Work</option>
+        <option value="Columbia Business School">Columbia Business School</option>
+        <option value="Columbia Law School">Columbia Law School</option>
+        <option value="Graduate School">Graduate School</option>
+        <option value="Columbia Journalism">Columbia Journalism</option>
+        <option value="Dental School of Columbia">Dental School of Columbia</option>
+      </optgroup>
+
+    </select>
+
+
   </form>
   
 </body>
