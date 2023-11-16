@@ -1,6 +1,40 @@
 body { 
-    font-family: Verdana;
-    margin: 20px;
-    background-color: rgb(251, 204, 170); 
+    font-family:Georgia;
+    /*margin: 20px;*/
+    margin: 0;
+    padding:0;
+    background-color: rgb(189, 228, 255); 
 }
+
+h1 {
+    margin: 20px;
+    font-size: 25px;
+    color: rgb(16, 35, 48);
+}
+.page-header {
+    /*background-color: #211f1f;*/
+    color: white;
+    padding: 10px;
+    text-align: center;
+}
+
+form {
+    display: flex;
+    align-items: center;
+}
+
+button.search-b {
+    padding: 6px;
+    cursor: pointer;
+    border-radius: 15px;
+    border: 1px solid rgb(69, 69, 121); 
+    margin-left: 5px;
+}
+
+
+
+
+
+
+
 
