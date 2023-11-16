@@ -24,20 +24,32 @@ select {
 h1 {
     margin: 20px;
     font-size: 25px;
-    color: rgb(16, 35, 48);
+    color: rgb(2, 51, 84);
 }
 
 .page-header {
     /*background-color: #211f1f;*/
-    color: white;
+    color: rgb(255,255,255);
     padding: 10px;
     text-align: center;
 }
 
-form.searchForm{
-    display: flex;
-    align-items: center;
-    margin: 20px;
+form.formSearch {
+    display: center;
+    align-items: flex;
+}
+
+input[type=text] {
+    padding: 8px;
+    width: 80%;
+    max-width: 450px;  /*makes the width long of input search*/
+    border-radius: 30px;  /*controls the curve*/
+    border: 1px solid #ccc; 
+    outline: none;  /*removes the outline*/
+}
+
+label[for=filter] {
+    margin-right: 10px; /* Adjusts to create desired space between word Filter: and options*/
 }
 
 form.filterForm {
@@ -51,20 +63,17 @@ form.filterForm {
     z-index: 1000;
 }
 
-label{
-    margin-right: 10px; /* Adjust the value based on the desired space */
-  }
+select[id=filter]{
+    text-align: center; /*centers the options in filter*/
+}
 
 button.search-b {
     padding: 6px;
     cursor: pointer;
     border-radius: 15px;
-    border: 1px solid rgb(69, 69, 121); 
-    margin-left: 5px;
-}
-
-select[id=filter]{
-    text-align:center
+    border: 1px solid #ccc; 
+    margin-left: 3px;
+    outline: none;
 }
 
 
