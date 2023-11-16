@@ -9,18 +9,17 @@ body {
 
 /* Select Styles (Filter Bar) */
 select {
-    width: 100%;
-    padding: 12px; /* Increase padding for better touch interaction */
-    margin-bottom: 16px;
-    border: 2px solid #010b2e; /* Update border for better visibility */
+    width: 100px; /* Set a fixed width for a small filter bar */
+    padding: 8px; /* Adjust padding for better appearance */
+    border: 2px solid #010b2e;
     border-radius: 4px;
     box-sizing: border-box;
     background-color: #f9f9f9;
     color: #333;
-    font-size: 16px; /* Slightly increase font size for better readability */
+    font-size: 12px; /* Decrease font size for a smaller appearance */
     outline: none;
     transition: border-color 0.3s ease;
-}
+  }
   
 h1 {
     margin: 20px;
@@ -35,10 +34,26 @@ h1 {
     text-align: center;
 }
 
-form {
+form.searchForm{
     display: flex;
     align-items: center;
+    margin: 20px;
 }
+
+form.filterForm {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end; /* Align items to the top right corner */
+    position: fixed;
+    top: 0;
+    right: 0; 
+    padding: 25px; 
+    z-index: 1000;
+}
+
+label{
+    margin-right: 10px; /* Adjust the value based on the desired space */
+  }
 
 button.search-b {
     padding: 6px;
@@ -48,5 +63,8 @@ button.search-b {
     margin-left: 5px;
 }
 
+select[id=filter]{
+    text-align:center
+}
 
 
