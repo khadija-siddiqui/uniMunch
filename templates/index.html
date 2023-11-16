@@ -4,16 +4,21 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>uniMunch</title>
-  <link rel= "stylesheet" href = "../static/styles.css">
+  <link rel="stylesheet" href = "../static/styles.css">
 </head>
 
 <body>
   <h1>uniMunch</h1>
+  <header class = "page-header"> 
+    <!--<p><a href="another">Go to the other page</a></p> takes you to the other html file-->
+    <form id="searchForm" action="another.html" method="GET">
+      <input type="text" id="searchInput" name="search_place" placeholder="Search for a place">
+      <button class = "search-b" type = "submit" value="Search">Search</button> <!--search button--> 
+      <!--<input type="submit" value="search"></p>-->
+    </form>
+  </header>
 
-  <p><a href="another">Go to the other page</a></p>
-
-  <form method="POST" action="/add">
-    <p>Name of new computer scientist: <input type="text" name="name"> <input type="submit" value="Add"></p>
+  <form method="POST" action="/add"> 
     <label for="filter">Filter:</label>
     <select id="filter" name="filter">
       <option value="Halal">Halal</option>
@@ -40,9 +45,8 @@
 
     </select>
 
-
   </form>
-  
+     
 </body>
 
 

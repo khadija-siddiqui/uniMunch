@@ -1,7 +1,10 @@
-body { 
-    font-family: Verdana;
-    margin: 70px;
-    background-color: rgb(236, 220, 208); 
+
+body {
+    font-family: Georgia;
+    /*margin: 20px;*/
+    margin: 0;
+    padding: 0;
+    background-color: rgb(189, 228, 255); 
 }
 
 /* Select Styles (Filter Bar) */
@@ -17,5 +20,33 @@ select {
     font-size: 16px; /* Slightly increase font size for better readability */
     outline: none;
     transition: border-color 0.3s ease;
-  }
+}
   
+h1 {
+    margin: 20px;
+    font-size: 25px;
+    color: rgb(16, 35, 48);
+}
+
+.page-header {
+    /*background-color: #211f1f;*/
+    color: white;
+    padding: 10px;
+    text-align: center;
+}
+
+form {
+    display: flex;
+    align-items: center;
+}
+
+button.search-b {
+    padding: 6px;
+    cursor: pointer;
+    border-radius: 15px;
+    border: 1px solid rgb(69, 69, 121); 
+    margin-left: 5px;
+}
+
+
+
