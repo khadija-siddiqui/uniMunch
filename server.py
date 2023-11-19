@@ -29,7 +29,7 @@ app = Flask(__name__, template_folder=tmpl_dir)
 #
 #     DATABASEURI = "postgresql://gravano:foobar@34.75.94.195/proj1part2"
 #
-DATABASEURI = "postgresql://user:password@34.75.94.195/proj1part2"
+DATABASEURI = "postgresql://mzn2002:143318@34.74.171.121/proj1part2"
 
 
 #
@@ -42,6 +42,37 @@ engine = create_engine(DATABASEURI)
 # Note that this will probably not work if you already have a table named 'test' in your database, containing meaningful data. This is only an example showing you how to run queries in your database using SQLAlchemy.
 #
 conn = engine.connect()
+
+def get_locations():
+  conn = engine.connect()
+    
+  # Fetch distinct school names
+  cursor = conn.execute(text("SELECT DISTINCT school_name FROM school"))
+  schools = [school[0] for school in cursor]
+
+  # Fetch distinct dining hall names
+  cursor = conn.execute(text("SELECT DISTINCT dining_hall_name FROM dining_hall"))
+  dining_halls = [hall[0] for hall in cursor]
+
+  # Fetch distinct cafe names
+  cursor = conn.execute(text("SELECT DISTINCT cafe_name FROM cafes"))
+  cafes = [cafe[0] for cafe in cursor]
+
+  # Fetch distinct food cart names
+  cursor = conn.execute(text("SELECT DISTINCT foodcart_name FROM food_cart"))
+  food_carts = [food_cart[0] for food_cart in cursor]
+
+  # Close the connection
+  conn.close()
+
+  # Combine all the lists
+  locations = schools + dining_halls + cafes + food_carts
+  return locations
+
+
+
+
+
 
 # The string needs to be wrapped around text()
 
@@ -118,20 +149,110 @@ def index():
   #
   cursor = g.conn.execute(text("SELECT name FROM test"))
   g.conn.commit()
+  #SELECT dietary_restriction FROM dining_halls WHERE dietary restriction = user input 
 
   # 2 ways to get results
 
   # Indexing result by column number
-  names = []
-  for result in cursor:
-    names.append(result[0])  
-
-  # Indexing result by column name
-  names = []
-  results = cursor.mappings().all()
-  for result in results:
-    names.append(result["name"])
+  names = [result[0] for result in cursor]
   cursor.close()
+
+  # Get the list of schools and their corresponding sids
+  locations = get_locations()
+
+  # Get the selected school and its associated dietary need
+  selected_location = request.args.get('selected_location')
+  print(selected_location)
+
+  result = []
+
+  
+  if selected_location:
+    location_name = selected_location
+    conn = engine.connect()
+
+    # Check if the location exists in each table
+    check_school_query = "SELECT 1 FROM school WHERE school_name = :location_name LIMIT 1"
+    check_cafe_query = "SELECT 1 FROM cafes WHERE cafe_name = :location_name LIMIT 1"
+    check_dining_hall_query = "SELECT 1 FROM dining_hall WHERE dining_hall_name = :location_name LIMIT 1"
+    check_food_cart_query = "SELECT 1 FROM food_cart WHERE foodcart_name = :location_name LIMIT 1"
+
+    # Determine the type of location
+    if conn.execute(text(check_school_query), {"location_name": location_name}).fetchone():
+      location_type = 'school'
+    elif conn.execute(text(check_cafe_query), {"location_name": location_name}).fetchone():
+      location_type = 'cafe'
+    elif conn.execute(text(check_dining_hall_query), {"location_name": location_name}).fetchone():
+      location_type = 'dining_hall'
+    elif conn.execute(text(check_food_cart_query), {"location_name": location_name}).fetchone():
+      location_type = 'food_cart'
+    else:
+      location_type = None
+
+      # Construct the query based on the location type
+    if location_type:
+      if location_type.lower() == 'school':
+        query = """
+            SELECT r.rid, r.opinion, r.stars, r.meal_type
+            FROM school s
+            JOIN places_to_eat p ON s.sid = p.sid
+            JOIN ref_p rp ON p.pid = rp.pid
+            JOIN review r ON rp.rid = r.rid
+            WHERE s.school_name = :location_name
+        """
+      elif location_type.lower() == 'cafe':
+        query = """
+            SELECT r.rid, r.opinion, r.stars, r.meal_type
+            FROM cafes c
+            JOIN places_to_eat p ON c.pid = p.pid
+            JOIN ref_p rp ON p.pid = rp.pid
+            JOIN review r ON rp.rid = r.rid
+            WHERE c.cafe_name = :location_name
+        """
+      elif location_type.lower() == 'dining_hall':
+        query = """
+            SELECT r.rid, r.opinion, r.stars, r.meal_type
+            FROM dining_hall d
+            JOIN places_to_eat p ON d.pid = p.pid
+            JOIN ref_p rp ON p.pid = rp.pid
+            JOIN review r ON rp.rid = r.rid
+            WHERE d.dining_hall_name = :location_name
+        """
+      elif location_type.lower() == 'food_cart':
+        query = """
+            SELECT r.rid, r.opinion, r.stars, r.meal_type
+            FROM food_cart f
+            JOIN ref_f rf ON f.fid = rf.fid
+            JOIN review r ON rf.rid = r.rid
+            WHERE f.foodcart_name = :location_name
+        """
+
+      cursor = conn.execute(text(query), {"location_name": location_name})
+      result = cursor.fetchall()
+
+      conn.close()
+
+      print(result)
+    else:
+      print("Invalid location:", selected_location)
+  else:
+    print("Invalid selected_location:", selected_location)
+
+
+
+
+  # if selected_school:
+  #   school_name = selected_school.split(':')[0]  # Assuming the sid is part of the value
+  #   print(school_name)
+  #   conn = engine.connect()
+  #   #fix and add JOIN Query 
+  #   cursor = conn.execute("SELECT sid FROM school WHERE sid=?", (sid,))
+  #   result = cursor.fetchone()
+  #   conn.close()
+  #   print(result[0])
+  #   dietary_need = result[0] if result else None
+
+
 
   #
   # Flask uses Jinja templates, which is an extension to HTML where you can
@@ -159,7 +280,12 @@ def index():
   #     <div>{{n}}</div>
   #     {% endfor %}
   #
-  context = dict(data = names)
+  context = {
+    'data': names,
+    'locations': locations,
+    'selected_location': selected_location,
+    'reviews': result
+  }
 
 
   #

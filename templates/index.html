@@ -18,36 +18,44 @@
     </form>
   </header>
 
-  <form class="filterForm" method="POST" action="/add"> 
-    <label for="filter">Filter:</label>
-    <select id="filter" name="filter">
-      <option value="Halal">Halal</option>
-      <option value="Vegan/Vegetarian">Vegan/Vegetarian</option>
-      <option value="Gluten-free">Gluten-free</option>
-      <option value="Kosher">Kosher</option>
-      <option value="Dairy-Free">Dairy-Free</option>
-      <option value="Breakfast">Breakfast</option>
-      <option value="Lunch">Lunch</option>
-      <option value="Dinner">Dinner</option>
-      <option value="Most Popular">Most Popular</option>
-      <optgroup label="Most Popular">
-        <option value="Barnard College">Barnard College</option>
-        <option value="Columbia College">Columbia College</option>
-        <option value="SEAS College">SEAS College</option>
-        <option value="Teacher's College">Teacher's College</option>
-        <option value="School of Social Work">School of Social Work</option>
-        <option value="Columbia Business School">Columbia Business School</option>
-        <option value="Columbia Law School">Columbia Law School</option>
-        <option value="Graduate School">Graduate School</option>
-        <option value="Columbia Journalism">Columbia Journalism</option>
-        <option value="Dental School of Columbia">Dental School of Columbia</option>
-      </optgroup>
-
+  
+  <form method="GET" action="/">
+    <label for="location">Select a location:</label>
+    <select id="location" name="selected_location">
+      {% for location in locations %}
+        <option value="{{ location }}">
+          {{ location }}
+        </option>
+      {% endfor %}
     </select>
-
+    <button type="submit">Submit</button>
   </form>
-     
+  
+  {% if reviews %}
+    <h2>Reviews for {{ selected_location.split(':')[0] if selected_location else 'Unknown Location' }}</h2>
+    <ul>
+      {% for review in reviews %}
+        <li>
+          <strong>Opinion:</strong> {{ review.opinion }}<br>
+          <strong>Stars:</strong> {{ review.stars }}<br>
+          <strong>Meal Type:</strong> {{ review.meal_type }}<br>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No reviews available for {{ selected_location.split(':')[0] if selected_location else 'Unknown Location' }}</p>
+  {% endif %}
+
+ 
+
+  <!-- <div>
+    {% for school in schools %}
+        <div>{{school}}</div>
+    {% endfor %}
+  </div> -->
+
 </body>
 
 
 </html>
+
