@@ -18,29 +18,10 @@ tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
 
 
-#
-# The following is a dummy URI that does not connect to a valid database. You will need to modify it to connect to your Part 2 database in order to use the data.
-#
-# XXX: The URI should be in the format of:
-#
-#     postgresql://USER:PASSWORD@34.75.94.195/proj1part2
-#
-# For example, if you had username gravano and password foobar, then the following line would be:
-#
-#     DATABASEURI = "postgresql://gravano:foobar@34.75.94.195/proj1part2"
-#
 DATABASEURI = "postgresql://mzn2002:143318@34.74.171.121/proj1part2"
 
-
-#
-# This line creates a database engine that knows how to connect to the URI above.
-#
 engine = create_engine(DATABASEURI)
 
-#
-# Example of running queries in your database
-# Note that this will probably not work if you already have a table named 'test' in your database, containing meaningful data. This is only an example showing you how to run queries in your database using SQLAlchemy.
-#
 conn = engine.connect()
 
 def get_locations():
@@ -69,12 +50,39 @@ def get_locations():
   locations = schools + dining_halls + cafes + food_carts
   return locations
 
+def get_reviews_for_location(location_name):
+    conn = engine.connect()
 
+    # Construct a query to find reviews for locations containing the user's input
+    query = """
+        SELECT r.rid, r.opinion, r.stars, r.meal_type
+        FROM (
+            SELECT rp.rid
+            FROM ref_p rp
+            JOIN places_to_eat p ON rp.pid = p.pid
+            LEFT JOIN school s ON p.sid = s.sid
+            LEFT JOIN dining_hall d ON p.pid = d.pid
+            LEFT JOIN cafes c ON p.pid = c.pid  
+            WHERE 
+                s.school_name LIKE :location_name OR
+                d.dining_hall_name LIKE :location_name OR
+                c.cafe_name LIKE :location_name
+            UNION
+            SELECT rf.rid
+            FROM ref_f rf
+            JOIN food_cart f ON rf.fid = f.fid
+            WHERE 
+                f.foodcart_name LIKE :location_name
+        ) matched_reviews
+        JOIN review r ON matched_reviews.rid = r.rid
+    """
 
+    cursor = conn.execute(text(query), {"location_name": f"%{location_name}%"})
+    result = cursor.fetchall()
 
+    conn.close()
 
-
-# The string needs to be wrapped around text()
+    return result
 
 conn.execute(text("""CREATE TABLE IF NOT EXISTS test (
   id serial,
@@ -114,19 +122,6 @@ def teardown_request(exception):
     pass
 
 
-#
-# @app.route is a decorator around index() that means:
-#   run index() whenever the user tries to access the "/" path using a GET request
-#
-# If you wanted the user to go to, for example, localhost:8111/foobar/ with POST or GET then you could use:
-#
-#       @app.route("/foobar/", methods=["POST", "GET"])
-#
-# PROTIP: (the trailing / in the path is important)
-#
-# see for routing: https://flask.palletsprojects.com/en/2.0.x/quickstart/?highlight=routing
-# see for decorators: http://simeonfranklin.com/blog/2012/jul/1/python-decorators-in-12-steps/
-#
 @app.route('/')
 def index():
   """
@@ -239,47 +234,6 @@ def index():
     print("Invalid selected_location:", selected_location)
 
 
-
-
-  # if selected_school:
-  #   school_name = selected_school.split(':')[0]  # Assuming the sid is part of the value
-  #   print(school_name)
-  #   conn = engine.connect()
-  #   #fix and add JOIN Query 
-  #   cursor = conn.execute("SELECT sid FROM school WHERE sid=?", (sid,))
-  #   result = cursor.fetchone()
-  #   conn.close()
-  #   print(result[0])
-  #   dietary_need = result[0] if result else None
-
-
-
-  #
-  # Flask uses Jinja templates, which is an extension to HTML where you can
-  # pass data to a template and dynamically generate HTML based on the data
-  # (you can think of it as simple PHP)
-  # documentation: https://realpython.com/primer-on-jinja-templating/
-  #
-  # You can see an example template in templates/index.html
-  #
-  # context are the variables that are passed to the template.
-  # for example, "data" key in the context variable defined below will be
-  # accessible as a variable in index.html:
-  #
-  #     # will print: [u'grace hopper', u'alan turing', u'ada lovelace']
-  #     <div>{{data}}</div>
-  #
-  #     # creates a <div> tag for each element in data
-  #     # will print:
-  #     #
-  #     #   <div>grace hopper</div>
-  #     #   <div>alan turing</div>
-  #     #   <div>ada lovelace</div>
-  #     #
-  #     {% for n in data %}
-  #     <div>{{n}}</div>
-  #     {% endfor %}
-  #
   context = {
     'data': names,
     'locations': locations,
@@ -294,14 +248,19 @@ def index():
   #
   return render_template("index.html", **context)
 
-#
-# This is an example of a different path.  You can see it at:
-#
-#     localhost:8111/another
-#
-# Notice that the function name is another() rather than index()
-# The functions for each app.route need to have different names
-#
+
+
+@app.route('/search')
+def search():
+  search_place = request.args.get('search_place')
+
+  if search_place:
+    # Handle the search query and retrieve reviews for the searched location
+    result = get_reviews_for_location(search_place)
+    return render_template("search_results.html", location=search_place, reviews=result)
+
+  return redirect('/')
+
 @app.route('/another')
 def another():
   return render_template("another.html")
