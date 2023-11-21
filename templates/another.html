@@ -1,1 +1,92 @@
-hello, I am another file!
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>uniMunch:Write a Review</title> 
+  <link rel="stylesheet" href = "../static/styles.css">
+</head>
+
+<body>
+
+  <h3>uniMunch</h3>
+  <h4>Write a Review</h4><br>
+  <!-- 'required' placed so the user can not submit their review without doing those fields -->
+  <form class ="writeReview" action = "/add_review" method="POST">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" placeholder="enter" required>
+    <br><br>
+    <label for="uni">Uni:</label>
+    <input type="text" id="uni" name="uni" placeholder="enter" required>
+    <br><br>
+    <label for="place">Place:</label>
+    <select id="place" name="place" class = "place" required>  
+      <option value = "" disabled selected>select a place</option>    
+      <option value="Hewitt Dining">Hewitt Dining</option>
+      <option value="Hewitt Kosher">Hewitt Kosher</option>
+      <option value="Diana Center">Diana Center</option>
+      <option value="Barnard Bubble Tea and Sushi">Barnard Bubble Tea and Sushi</option>
+      <option value="John Jay">John Jay</option>
+      <option value="JJays">JJays</option>
+      <option value="Ferris">Ferris</option>
+      <option value="Faculty House">Faculty House</option>
+      <option value="Mike Sub Shop">Mike Sub Shop</option>
+      <option value="Chef Don Pizza Pi">Chef Don Pizza Pi</option>
+      <option value="Blue Java Cafe- Butler">Blue Java Cafe- Butler</option>
+      <option value="Blue Java Cafe- Mudd">Blue Java Cafe- Mudd</option>
+      <option value="Blue Java Cafe- Uris">Blue Java Cafe- Uris</option>
+      <option value="Blue Java at Everett Library Cafe">Blue Java at Everett Library Cafe</option>
+      <option value="Lenfest Cafe">Lenfest Cafe</option>
+      <option value="Lizs Place">Lizs Place</option>
+      <option value="Subway">Subway</option>
+      <option value="ShakeShack">ShakeShack</option>
+      <option value="Starbucks">Starbucks</option>
+      <option value="Dunkin">Dunkin</option>
+      <option value="Bubblion">Bubblion</option>
+      <option value="Hooda">Hooda</option>
+      <option value="Fac Shack Food">Fac Shack Food</option>
+      <option value="Kalbi">Kalbi</option>
+      <option value="Miracle Thai Express">Miracle Thai Express</option>
+      <option value="Halal Cart">Halal Cart</option>
+      <option value="Momo Delight">Momo Delight</option>
+      <option value="Kung Fu Express">Kung Fu Express</option>
+      <option value="Uncle Luoyang">Uncle Luoyang</option>
+      <option value="Jans Express">Jans Express</option>   	  	
+    </select>
+    <br><br>   
+    <label for="meal_type">Meal Type:</label>
+    <select id="meal_type" name="meal_type" class = "meal_type" required>  
+      <option value = "" disabled selected>select a type</option>    
+      <option value="breakfast">breakfast</option>
+      <option value="lunch">lunch</option>
+      <option value="dinner">dinner</option>
+    </select>
+    <br><br>
+    <label for="stars">Stars:</label>
+    <input type="number" id="stars" name="stars" placeholder="number between 1-5" required>
+    <br><br>
+    <label for="opinion">Opinion:</label>
+    <textarea id="opinion" name="opinion" placeholder="enter" required></textarea> <!--entering many lines-->
+    <br><br>
+    <button class = "submit-b" type = "submit" value="Submit">Submit</button><br> <!--search button--> 
+    <br>
+  </form>
+    <h2>Your New Review</h2>
+    <table>
+        <tr>
+          <th>Opinion</th>
+          <th>Rating</th>
+          <th>Meal Type</th>    
+        </tr>
+        {% for row in user_reviews %}
+        <tr>
+          {% for value in row %}
+              <td>{{ value }}</td>
+          {% endfor %}
+      </tr>
+        {% endfor %}
+    </table>
+     
+</body>
+
+

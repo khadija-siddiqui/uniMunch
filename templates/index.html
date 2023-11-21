@@ -11,15 +11,17 @@
   <h1>uniMunch</h1>
   <header class = "page-header"> 
     <!--<p><a href="another">Go to the other page</a></p> takes you to the other html file-->
-    <form id="searchForm" action="another.html" method="GET">
+    <form class="searchForm" action="another.html" method="GET">
       <input type="text" id="searchInput" name="search_place" placeholder="Search for a place">
       <button class = "search-b" type = "submit" value="Search">Search</button> <!--search button--> 
       <!--<input type="submit" value="search"></p>-->
     </form>
   </header>
 
-  <header class = "review-b">
-    <a href = "/create_revpg"><button class = "submit-rev" type = "submit">Write a Review</button></a> <!--write review button--> 
+  <header class = "write_rev-b">
+    <form action = "/create_revpg" method="GET">
+      <button class = "write-rev" type = "submit">Write a Review</button> <!--write review button-->
+    </form> 
   </header>
 
   <form class="filterForm" method="POST" action="/add"> 
@@ -52,16 +54,34 @@
 
   </form>
 
+
+  <!--<form method="GET" action = "/">-->
+    <!--<input type="text" name="allrev">-->
+  <!---</form>
   <h2>All Reviews:</h2>
   <ul>
     {% for review in reviews %}
-      <li>
-        Stars: {{review.stars}} <br>
-        Meal Type: {{review.meal_type}} <br>
-        Opinion: {{reviews.opinion}} <br>
-      </li>
-      {% endfor %}
-  </ul>
+      <li>Stars: {{ review.stars }} </li>
+      <li>Meal Type: {{ review.meal_type }} </li>
+      <li>Opinion: {{ review.opinion }} </li>
+    {% endfor %}
+  </ul>-->
+
+  <h2>All Reviews</h2>
+    <table>
+        <tr>
+          <th>Opinion</th>
+          <th>Rating</th>
+          <th>Meal Type</th>    
+        </tr>
+        {% for row in all_reviews %}
+        <tr>
+          {% for value in row %}
+              <td>{{ value }}</td>
+          {% endfor %}
+      </tr>
+        {% endfor %}
+    </table>
      
 </body>
 

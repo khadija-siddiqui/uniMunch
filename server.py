@@ -8,6 +8,8 @@ Go to http://localhost:8111 in your browser.
 A debugger such as "pdb" may be helpful for debugging.
 Read about it online.
 """
+import string 
+import secrets
 import os
   # accessible as a variable in index.html:
 from sqlalchemy import *
@@ -29,8 +31,7 @@ app = Flask(__name__, template_folder=tmpl_dir)
 #
 #     DATABASEURI = "postgresql://gravano:foobar@34.75.94.195/proj1part2"
 #
-DATABASEURI = "postgresql://mzn2002:143318@34.75.94.195/proj1part2"
-
+DATABASEURI = "postgresql://mzn2002:143318@34.74.171.121/proj1part2"
 
 #
 # This line creates a database engine that knows how to connect to the URI above.
@@ -43,19 +44,10 @@ engine = create_engine(DATABASEURI)
 #
 conn = engine.connect()
 
-# The string needs to be wrapped around text()
-
-#conn.execute(text("""CREATE TABLE IF NOT EXISTS test (
-  #id serial,
-  #name text
-#);"""))
-#conn.execute(text("""INSERT INTO test(name) VALUES ('grace hopper'), ('alan turing'), ('ada lovelace');"""))
-
 # To make the queries run, we need to add this commit line
-
 #conn.commit() 
 
-@app.before_request
+@app.before_request 
 def before_request():
   """
   This function is run at the beginning of every web request
@@ -96,7 +88,7 @@ def teardown_request(exception):
 # see for routing: https://flask.palletsprojects.com/en/2.0.x/quickstart/?highlight=routing
 # see for decorators: http://simeonfranklin.com/blog/2012/jul/1/python-decorators-in-12-steps/
 #
-@app.route('/', methods=["GET"]) #added GET to display all reviews 
+@app.route('/', methods=['GET']) #added GET to display all reviews 
 def index():
   """
   request is a special object that Flask provides to access web request information:
@@ -117,28 +109,21 @@ def index():
   #cursor = g.conn.execute(text("SELECT name FROM test"))
   #g.conn.commit()
 
-  cursor = conn.cursor()
-
   #trying to display all the reviews and their attributes 
-  cursor.execute("SELECT * FROM review")
-  reviews = cursor.fetchall() #returns all tuples
+  #result = engine.execute("SELECT * FROM review")
+  #reviews = result.fetchall() #returns all tuples
 
-  conn.close()
+  cursor = g.conn.execute(text("SELECT opinion, stars, meal_type FROM review")) #JOIN 
+  g.conn.commit()
+  
+  # Fetchs all results as a list of lists
+  all_reviews = [list(result) for result in cursor.fetchall()]
 
+  # Don't forget to close the cursor
+  cursor.close()
 
-  # 2 ways to get results
+  return render_template('index.html', all_reviews=all_reviews)
 
-  # Indexing result by column number
-  #names = []
-  #for result in cursor:
-    #names.append(result[0])  
-
-  # Indexing result by column name
-  #names = []
-  #results = cursor.mappings().all()
-  #for result in results:
-    #names.append(result["name"])
-  #cursor.close()
 
   #
   # Flask uses Jinja templates, which is an extension to HTML where you can
@@ -152,24 +137,6 @@ def index():
   # for example, "data" key in the context variable defined below will be
   # accessible as a variable in index.html:
   #
-  #     # will print: [u'grace hopper', u'alan turing', u'ada lovelace']
-  #     <div>{{data}}</div>
-  #
-  #     # creates a <div> tag for each element in data
-  #     # will print:
-  #     #
-  #     #   <div>grace hopper</div>
-  #     #   <div>alan turing</div>
-  #     #   <div>ada lovelace</div>
-  #     #
-  #     {% for n in data %}
-  #     <div>{{n}}</div>
-  #     {% endfor %}
-  #
-  #context = dict(data = names)
-
-
-  #
   # render_template looks in the templates/ folder for files.
   # for example, the below file reads template/index.html
   #
@@ -182,66 +149,107 @@ def index():
 #
 # Notice that the function name is another() rather than index()
 # The functions for each app.route need to have different names
-#
+
+
+
 @app.route('/create_revpg', methods=['GET'])
 def create_revpg():
   return render_template('another.html')
+
 
 #attempting to create route function to handle making reviews with POST request
 @app.route('/add_review', methods=['POST']) #POST for form, POST for reviews when user chooses to add data
 def add_review(): 
 
+  conn = engine.connect()
 
-  #user_id = request.form['name']
-  #params_dict = {"name":name}
-  #g.conn.execute(text('INSERT INTO test(name) VALUES (:name)'), params_dict)
-  #g.conn.commit()
-  #return redirect('/')
+  name = request.form.get('name') #attribute of our_user data
+  uni = request.form.get('uni')   #attribute of our_user data
 
-  uid_id = request.form.get('uid')
-  pid_id = request.form.get('pid')
-  fid_id = request.form.get('fid')
+  #retrieving the user's id based on name and uni info they input
+  cursor = conn.execute(text("SELECT uid FROM our_user WHERE uni = :uni AND name = :name"), {'uni' : uni, 'name' : name})
+  uid = cursor.fetchone()
+
+  #if user does NOT exist, add them 
+  if uid:
+    uid = uid[0]
+  else:
+    #here we insert a user into our_user table & let the database generate the uid
+    uid = secrets.token_hex(5) 
+    cursor = conn.execute(text("INSERT INTO our_user (uid, uni, name) VALUES (:uid, :uni, :name)"), { 'uid' : uid,'uni' : uni, 'name' : name})
+    conn.commit()
+    
+  place = request.form.get('place')
+  #figuring out if the review is for a cafe, dining hall, or food cart --> when matched storing of place
+
+  #defines dictionary with keys being table names & values being the corresponding name attribute 
+  name_attribute_map = {
+    "dining_hall" : "dining_hall_name",
+    "cafes" : "cafe_name",
+    "food_cart" : "foodcart_name",
+  }
+
+  table_foundin = None
+  id_found = None
+
+  pid = None
+  fid = None
+  #iterating thru ea table to check
+  for table, name_attribute in name_attribute_map.items():
+    find = text(f"SELECT * FROM {table} WHERE {name_attribute} = :place")
+    cursor = conn.execute(find, {'place' : place })
+
+    result = cursor.fetchone()
+
+    if result:
+      table_foundin = table #storing the table title found in
+      id_found = result[0]  #storing the id of the matched query
+      break #loop stops after first match
+
+  #check which table the match was found in &
+  #then set a var with the same id attribute name as in table to id_found
+  if table_foundin == "dining_hall" or table_foundin == "cafes":
+    pid = id_found
+  elif table_foundin == "food_cart":
+    fid = id_found
+
+
+  #attributes data provided by the user
   meal_type = request.form.get('meal_type')
   stars = int(request.form.get('stars'))
   opinion = request.form.get('opinion')
+  rev_id = secrets.token_hex(5) #since ea byte is represented by 2 characters in hexdecimal, only need 5 bytes for 10-char string
 
-  #connects to our database 
-  cursor = conn.cursor()
-  
 
-  #try this instead if doesn't work:
-  #cursor = g.conn.execute(text("SELECT * FROM our_user WHERE uid = %s", (user_id)))
-  cursor.execute(("SELECT * FROM our_user WHERE uid = %s", (uid_id)))
-  user = cursor.fetchone() #returns a tuple with the values of columns in the user_id row 
-
- #if user does NOT exist, add them 
-  if user is None:
-    cursor.execute("INSERT INTO our_user (uid) VALUES (%s) RETURNING uid", (uid_id))
-    conn.commit()
-  
-
-  #inserting now the review into the review table
-  cursor.execute("INSERT INTO review (opinion, stars, meal_type) VALUES (%s, %s, %s) RETURNING rid", (opinion, stars, meal_type))
-
-  rev_id = cursor.fetchone()[0] #[0] will index to get the 1st element of the tuple, to get rid 
+  #INSERTING REVIEW into the review table
+  cursor = conn.execute(text("INSERT INTO review (rid, opinion, stars, meal_type) VALUES (:rev_id, :opinion, :stars, :meal_type)"), { 'rev_id' : rev_id,'opinion' : opinion, 'stars' : stars, 'meal_type' : meal_type})
 
   #liniking review to places_to_eat
-  cursor.execute("INSERT INTO ref_p (rid, pid) VALUES (%s, %s)", (rev_id, pid_id))
-
+  cursor = conn.execute(text("INSERT INTO ref_p (rid, pid) VALUES (:rev_id, :pid)"), {'rev_id' : rev_id, 'pid' : pid})
+  
   #linking review to food_cart 
-  cursor.execute("INSERT INTO ref_f (rid, fid) VALUES (%s, %s)", (rev_id, fid_id))
+  cursor = conn.execute(text("INSERT INTO ref_f (rid, fid) VALUES (:rev_id, :fid)"), {'rev_id' : rev_id, 'fid' : fid})
 
   #linking review to the user
-  cursor.execute("INSERT INTO review_leaves (rid, uid) VALUES (%s, %s)", (rev_id, uid_id))
+  cursor = conn.execute(text("INSERT INTO review_leaves (rid, uid) VALUES (:rev_id, :uid)"), {'rev_id' : rev_id, 'uid' : uid})
 
   conn.commit()
+
+
+  #DISPLAYING Created Review --> displays ALL reviews created by user --> as a List
+  user_reviews = conn.execute(text("SELECT opinion, stars, meal_type FROM review WHERE rid = :rev_id"), {'rev_id' :rev_id}).fetchall()
+
+  user_reviews = [list(user_rev) for user_rev in user_reviews]
+
   conn.close()
+
+  return render_template('another.html', user_reviews=user_reviews) 
 
 
 #@app.route('/login')
 #def login():
-    #abort(401)
-    #this_is_never_executed()
+  #abort(401)
+  #this_is_never_executed()
 
 
 if __name__ == "__main__":
@@ -270,3 +278,6 @@ if __name__ == "__main__":
     app.run(host=HOST, port=PORT, debug=debug, threaded=threaded)
 
   run()
+
+
+
