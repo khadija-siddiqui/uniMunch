@@ -119,7 +119,7 @@ button.write-rev {
     border: 1px solid #fffcfc00; 
     margin-left: 3px;
     outline: none;
-    background: white;
+    background: rgb(255, 253, 253);
     font-family: Helvetica, sans-serif;
 }
 
@@ -129,6 +129,31 @@ input[type=text] {
     outline: none;  /*removes the outline*/
 }
 
+/*----related to button "write-feedback" that takes you to another.html to write a review---*/
+.feedback_rev-b{
+    color:rgb(255, 255, 255); 
+    text-align: center;
+    outline: none;
+}
+
+button.write-feed{
+    padding: 5px;
+    margin-top: 5px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    border-radius: 13px;
+    border: 1px solid #fffcfc00; 
+    margin-left: 3px;
+    outline: none;
+    background: white;
+    font-family: Helvetica, sans-serif;
+}
+
+input[type=text] {
+    border-radius: 30px;  /*controls the curve*/
+    border: 1px solid #ccc; 
+    outline: none;  /*removes the outline*/
+}
 
 
 /*--------related to Creating Review---------*/
@@ -228,12 +253,15 @@ form label[for="uni"]:before,
 form label[for="place"]:before,
 form label[for="meal_type"]:before,
 form label[for="stars"]:before,
-form label[for="opinion"]:before {
+form label[for="opinion"]:before,
+form label[for="comment"]:before,
+form label[for ="web_stars"]:before  {
     content: '*';
-    color: rgb(198, 6, 6);
+    color: rgb(231, 0, 0);
     margin-right: 2px;
     margin-left: 15px;
 }
+
 
  /*Related to Displaying all of the User's Reviews*/
 h5 {

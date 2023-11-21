@@ -167,10 +167,6 @@ def index():
   #reviews = result.fetchall() #returns all tuples
 
 
-  # Indexing result by column number
-  names = [result[0] for result in cursor]
-  cursor.close()
-
   # Get the list of schools and their corresponding sids
   locations = get_locations()
 
@@ -254,7 +250,6 @@ def index():
 
 
   context = {
-    'data': names,
     'locations': locations,
     'selected_location': selected_location,
     'reviews': result
@@ -319,6 +314,11 @@ def search():
 @app.route('/create_revpg', methods=['GET'])
 def create_revpg():
   return render_template('another.html')
+
+@app.route('/create_feedbackpg', methods=['GET'])
+def create_feedbackpg():
+  return render_template('feedback.html')
+
 
 
 #attempting to create route function to handle making reviews with POST request
@@ -400,7 +400,7 @@ def add_review():
   conn.commit()
 
 
-  #DISPLAYING Created Review --> displays ALL reviews created by user --> as a List
+  #Updating & Displaying Created Review --> displays ALL reviews created by user --> as a List
   user_reviews = conn.execute(text("SELECT opinion, stars, meal_type FROM review WHERE rid = :rev_id"), {'rev_id' :rev_id}).fetchall()
 
   user_reviews = [list(user_rev) for user_rev in user_reviews]
@@ -411,6 +411,47 @@ def add_review():
 
 
 
+#Updating Database & Displaying Web Feedback Review ---> displays ALL feedback reviews created by user --> as a List
+@app.route('/add_feedback', methods=['POST']) #POST for form, POST for reviews when user chooses to add data
+def add_feedback(): 
+
+  conn = engine.connect()
+
+  name = request.form.get('name') #attribute of our_user data
+  uni = request.form.get('uni')   #attribute of our_user data
+
+  #retrieving the user's id based on name and uni info they input
+  cursor = conn.execute(text("SELECT uid FROM our_user WHERE uni = :uni AND name = :name"), {'uni' : uni, 'name' : name})
+  uid = cursor.fetchone()
+
+  #if user does NOT exist, add them 
+  if uid:
+    uid = uid[0]
+  else:
+    #here we insert a user into our_user table & let the database generate the uid
+    uid = secrets.token_hex(5) 
+    cursor = conn.execute(text("INSERT INTO our_user (uid, uni, name) VALUES (:uid, :uni, :name)"), { 'uid' : uid,'uni' : uni, 'name' : name})
+    conn.commit()
+
+
+  web_stars = int(request.form.get('web_stars'))
+  comment = request.form.get('comment')
+  wid_id = secrets.token_hex(5)
+
+  #INSERTING REVIEW into the review table
+  cursor = conn.execute(text("INSERT INTO web_feedback_suggests (wid, comment, web_stars, uid) VALUES (:wid_id, :comment, :web_stars, :uid)"), { 'wid_id' : wid_id,'comment' : comment, 'web_stars' : web_stars, 'uid' : uid})
+
+  conn.commit()
+
+
+  #DISPLAYING Created Review --> displays ALL reviews created by user --> as a List
+  user_webreviews = conn.execute(text("SELECT comment, web_stars FROM web_feedback_suggests WHERE wid = :wid_id"), {'wid_id' :wid_id}).fetchall()
+
+  user_webreviews = [list(web_rev) for web_rev in user_webreviews]
+
+  conn.close()
+
+  return render_template('feedback.html', user_webreviews=user_webreviews) 
 
 
 
