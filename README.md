@@ -7,7 +7,7 @@ Password: 143318
 Database: proj1part2
 Host: 34.74.171.121
 
-The web application is accessible at the following URL: http://127.0.0.1:8111
+The web application is accessible at the following URL: http://35.243.155.255:8111/
 
 Parts Implemented from the Original Proposal (Part 1)
 Database Schema and Tables: Implemented the proposed database schema with tables such as school, dining_hall, cafes, food_cart, web_feedback_suggests, visits, goes_to, places_to_eat, ref_p, ref_f, review, our_user, and review_leaves.
@@ -26,8 +26,7 @@ We enhanced the aesthetic of the website for better user functionality.
 Non-Implemented Parts and Reasons
 All proposed parts were implemented.
 
-Interesting Web Pages and Database Operations
-
+Interesting Web Pages and Database Operations:
 Home Page:
 Purpose: Displays a list of names from the test table and provides a dropdown menu to select a location (school, dining hall, cafe, or food cart).
 Database Operations: Retrieves names from the test table and reviews based on the selected location from various tables.
