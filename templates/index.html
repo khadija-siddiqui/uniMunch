@@ -24,6 +24,12 @@
       <button class = "write-rev" type = "submit">Write a Review</button> <!--write review button-->
     </form> 
   </header>
+  <header class = "feedback_rev-b">
+    <form action = "/create_feedbackpg" method="GET">
+      <button class = "write-feed" type = "submit">Give Website Feedback</button> <!--write review button-->
+    </form> 
+  </header>
+
   
   
   <form method="GET" action="/">
@@ -34,6 +40,9 @@
           {{ location }}
         </option>
       {% endfor %}
+    </select>
+    <button type="submit">Submit</button>
+  </form>
       
       
   {% if reviews %}
