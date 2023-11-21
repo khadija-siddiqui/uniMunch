@@ -1,6 +1,272 @@
-body { 
-    font-family: Verdana;
-    margin: 20px;
-    background-color: rgb(251, 204, 170); 
+
+body {
+    font-family: Georgia;
+    /*margin: 20px;*/
+    margin: 0;
+    padding: 0;
+    background-color: rgb(189, 228, 255); 
 }
 
+/* Select Styles (Filter Bar) */
+select {
+    width: 100px; /* Set a fixed width for a small filter bar */
+    padding: 8px; /* Adjust padding for better appearance */
+    border: 2px solid #010b2e;
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: #f9f9f9;
+    color: #333;
+    font-size: 12px; /* Decrease font size for a smaller appearance */
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+form.filterForm {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end; /* Align items to the top right corner */
+    position: fixed;
+    top: 0;
+    right: 0; 
+    padding: 25px; 
+    z-index: 1000;
+}
+
+select[id=filter]{
+    text-align: center; /*centers the options in filter*/
+}
+
+label[for=filter] {
+    margin-right: 7px; /* Adjusts to create desired space between word Filter: and options*/
+    padding: 8px;
+}
+
+
+  
+/*h1: index.html Title for Website -- uniMunch */
+h1 {
+    margin-left: 11px;
+    font-size: 25px;
+    color: rgb(2, 51, 84);
+}
+
+/*h2: index.html Heading -- All Reviews*/
+h2{
+    font-family: Georgia; 
+    margin-left: 10px;
+}
+
+
+/*------------ khadija Front end related to Search Bar ------------*/
+#searchInput {   /* targets only the input with the id = searchInput*/
+    padding: 8px;
+    width: 80%;
+    max-width: 410px;  /*makes the width long of input search*/
+}
+
+.page-header {
+    /*background-color: #211f1f;*/
+    color: rgb(255, 255, 255);
+    padding: 10px;
+    text-align: center;
+}
+
+/*might not need*/
+.searchForm {
+    display: center;
+    align-items: flex;
+}
+
+button.search-b {
+    padding: 6px;
+    cursor: pointer;
+    border-radius: 13px;
+    border: 1px solid #ccc; 
+    margin-left: 3px;
+    outline: none;
+}
+
+
+/*----------related to the Displaying of Reviews table-------*/
+/*.column-spaceless {
+    padding-right: 20px;
+}*/
+
+th, td {
+    border: 1px solid rgb(197, 211, 232);
+    padding: 5px;
+    text-align: left;
+}
+
+th {
+    text-align: center;
+    margin-right: 3px;
+}
+
+
+
+/*----related to button "write-rev" that takes you to another.html to write a review---*/
+.write_rev-b{
+    color:rgb(255, 255, 255);
+    text-align: center;
+    outline: none;
+}
+
+button.write-rev {
+    padding: 6px;
+    cursor: pointer;
+    border-radius: 13px;
+    border: 1px solid #fffcfc00; 
+    margin-left: 3px;
+    outline: none;
+    background: rgb(255, 253, 253);
+    font-family: Helvetica, sans-serif;
+}
+
+input[type=text] {
+    border-radius: 30px;  /*controls the curve*/
+    border: 1px solid #ccc; 
+    outline: none;  /*removes the outline*/
+}
+
+/*----related to button "write-feedback" that takes you to another.html to write a review---*/
+.feedback_rev-b{
+    color:rgb(255, 255, 255); 
+    text-align: center;
+    outline: none;
+}
+
+button.write-feed{
+    padding: 5px;
+    margin-top: 5px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    border-radius: 13px;
+    border: 1px solid #fffcfc00; 
+    margin-left: 3px;
+    outline: none;
+    background: white;
+    font-family: Helvetica, sans-serif;
+}
+
+input[type=text] {
+    border-radius: 30px;  /*controls the curve*/
+    border: 1px solid #ccc; 
+    outline: none;  /*removes the outline*/
+}
+
+
+/*--------related to Creating Review---------*/
+
+button.submit-b {  
+    padding: 7px;
+    cursor: pointer;
+    border-radius: 15px;
+    border: 1px solid #fffcfc00; 
+    margin-left: 15px;
+    outline: none;
+    border: .5px solid #dad8d8; 
+    background: rgba(255, 255, 255, 0.945);
+    font-family: Helvetica, sans-serif;
+}
+
+h3 {
+    margin-left: 12px;
+    font-size: 25px;
+    color: rgb(2, 51, 84);
+}
+
+h4 {
+   text-align: center;
+    font-size: 20px;
+    color:rgb(1, 54, 89);
+
+}
+
+.writeReview {
+    display: center;
+    align-items: center;
+
+}
+
+input[type = number] {    /*for create review -- stars */
+    border-radius: 27px;  /*controls the curve*/
+    border: 1px solid #ccc; 
+    outline: none;  /*removes the outline*/
+    padding: 5px;
+    width: 80%;
+    max-width: 200px;
+
+}
+
+#name { /*input with id=name */
+    padding: 5px;
+    width: 80%;
+    max-width: 230px; /*controls max width of inputting bar*/
+}
+
+#uni { /*input with id=uni */
+    padding: 5px;
+    width: 80%;
+    max-width: 200px;
+}
+
+#place { /*input with id=uni */
+    padding: 5px;
+    width: 80%;
+    max-width: 200px;
+}
+
+
+select.meal_type { /*select with id=meal_type */
+    padding: 5px;
+    width: 80%;
+    max-width: 200px;
+    border-radius: 20px;  /*controls the curve*/
+    border: 1px solid #615f5f00; /*light outline of selection bar*/
+    outline: none;
+}
+
+select.place { /*select with id=meal_type */
+    padding: 5px;
+    width: 80%;
+    max-width: 200px;
+    border-radius: 20px;  /*controls the curve*/
+    border: 1px solid #615f5f00; /*light outline of selection bar*/
+    outline: none;
+}
+
+
+textarea[id = opinion] { /*input with id=opinion -- multi-lines of input*/
+    padding: 8px;
+    width: 90%;
+    max-width: 460px;
+    height: 120%;
+    box-sizing: border-box;
+    border-radius: 20px;  /*controls the curve*/
+    
+}
+
+/*adding a red * to show user that these are REQUIRED*/
+form label[for="name"]:before, 
+form label[for="uni"]:before,
+form label[for="place"]:before,
+form label[for="meal_type"]:before,
+form label[for="stars"]:before,
+form label[for="opinion"]:before,
+form label[for="comment"]:before,
+form label[for ="web_stars"]:before  {
+    content: '*';
+    color: rgb(231, 0, 0);
+    margin-right: 2px;
+    margin-left: 15px;
+}
+
+
+ /*Related to Displaying all of the User's Reviews*/
+h5 {
+    text-align: center;
+     font-size: 20px;
+     color:rgb(1, 54, 89);
+ 
+}

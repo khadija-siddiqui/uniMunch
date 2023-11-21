@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>uniMunch: Website Feedback</title> 
+  <link rel="stylesheet" href = "../static/styles.css">
+</head>
+
+<body>
+
+  <h3>uniMunch</h3>
+  <h4>Leave Website Feedback</h4><br>
+  <!-- 'required' placed so the user can not submit their review without doing those fields -->
+  <form class ="writefeedback" action = "/add_feedback" method="POST">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" placeholder="enter" required>
+    <br><br>
+    <label for="uni">Uni:</label>
+    <input type="text" id="uni" name="uni" placeholder="enter" required>
+    <br><br>   
+    <label for="web_stars">Stars:</label>
+    <input type="number" id="web_stars" name="web_stars" placeholder="number between 1-5" required>
+    <br><br>
+    <label for="comment">Comment:</label>
+    <textarea id="comment" name="comment" placeholder="enter" required></textarea> <!--entering many lines-->
+    <br><br>
+    <button class = "submit-b" type = "submit" value="Submit">Submit</button><br> <!--search button--> 
+    <br>
+  </form>
+    <h2>Your Website Review</h2>
+    <table>
+        <tr>
+          <th>Comment</th>
+          <th>Rating</th>   
+        </tr>
+        {% for row in user_webreviews %}
+        <tr>
+          {% for value in row %}
+              <td>{{ value }}</td>
+          {% endfor %}
+      </tr>
+        {% endfor %}
+    </table>
+     
+</body>

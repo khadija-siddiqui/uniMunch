@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>uniMunch</title>
+  <link rel="stylesheet" href = "../static/styles.css">
+</head>
+
+<body>
+    <h1>uniMunch</h1>
+    <header class="page-header">
+      <!-- Include any navigation or other elements you want on the page -->
+    </header>
+  
+    <h2>Reviews for {{ location if location else 'Unknown Location' }}</h2>
+    {% if reviews %}
+      <ul>
+        {% for review in reviews %}
+          <li>
+            <strong>Opinion:</strong> {{ review.opinion }}<br>
+            <strong>Stars:</strong> {{ review.stars }}<br>
+            <strong>Meal Type:</strong> {{ review.meal_type }}<br>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No reviews available for {{ location if location else 'Unknown Location' }}</p>
+    {% endif %}
+  </body>
+  </html>
+

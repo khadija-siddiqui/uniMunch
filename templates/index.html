@@ -1,33 +1,84 @@
-<<<<<<< HEAD
-<html>
-  <style>
-    body{ 
-      font-size: 15pt;
-      font-family: Verdana; 
-    }
-  </style>
-
-=======
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>uniMunch</title>
-  <link rel="stylessheet" href = "../static/styles.css">
+  <link rel="stylesheet" href = "../static/styles.css">
 </head>
->>>>>>> origin/nayma
 
 <body>
   <h1>uniMunch</h1>
+  <header class = "page-header"> 
+    <form id="searchForm" action="/search" method="GET">
+      <input type="text" id="searchInput" name="search_place" placeholder="Enter a location name">
+      <button class = "search-b" type = "submit" value="Search">Search</button> <!--search button--> 
+      <!--<input type="submit" value="search"></p>-->
+    </form>
+  </header>
 
-  <p><a href="another">Go to the other page</a></p>
-
-  <form method="POST" action="/add">
-    <p>Name of new computer scientist: <input type="text" name="name"> <input type="submit" value="Add"></p>
-  </form>
+ 
   
+  <header class = "write_rev-b">
+    <form action = "/create_revpg" method="GET">
+      <button class = "write-rev" type = "submit">Write a Review</button> <!--write review button-->
+    </form> 
+  </header>
+  <header class = "feedback_rev-b">
+    <form action = "/create_feedbackpg" method="GET">
+      <button class = "write-feed" type = "submit">Give Website Feedback</button> <!--write review button-->
+    </form> 
+  </header>
+
+  
+  
+  <form method="GET" action="/">
+    <label for="location">Select a location:</label>
+    <select id="location" name="selected_location">
+      {% for location in locations %}
+        <option value="{{ location }}">
+          {{ location }}
+        </option>
+      {% endfor %}
+    </select>
+    <button type="submit">Submit</button>
+  </form>
+      
+      
+  {% if reviews %}
+    <h2>Reviews for {{ selected_location.split(':')[0] if selected_location else 'Unknown Location' }}</h2>
+    <ul>
+      {% for review in reviews %}
+        <li>
+          <strong>Opinion:</strong> {{ review.opinion }}<br>
+          <strong>Stars:</strong> {{ review.stars }}<br>
+          <strong>Meal Type:</strong> {{ review.meal_type }}<br>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No reviews available for {{ selected_location.split(':')[0] if selected_location else 'Unknown Location' }}</p>
+  {% endif %}
+
+ 
+
+  <h2>All Reviews</h2>
+    <table>
+        <tr>
+          <th>Opinion</th>
+          <th>Rating</th>
+          <th>Meal Type</th>    
+        </tr>
+        {% for row in all_reviews %}
+        <tr>
+          {% for value in row %}
+              <td>{{ value }}</td>
+          {% endfor %}
+      </tr>
+        {% endfor %}
+    </table>
+     
 </body>
 
-
 </html>
+
