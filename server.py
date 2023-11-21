@@ -19,7 +19,6 @@ from flask import Flask, request, render_template, g, redirect, Response, abort
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
 
-
 #
 # The following is a dummy URI that does not connect to a valid database. You will need to modify it to connect to your Part 2 database in order to use the data.
 #
@@ -36,13 +35,70 @@ DATABASEURI = "postgresql://mzn2002:143318@34.74.171.121/proj1part2"
 #
 # This line creates a database engine that knows how to connect to the URI above.
 #
+
 engine = create_engine(DATABASEURI)
 
-#
-# Example of running queries in your database
-# Note that this will probably not work if you already have a table named 'test' in your database, containing meaningful data. This is only an example showing you how to run queries in your database using SQLAlchemy.
-#
 conn = engine.connect()
+
+def get_locations():
+  conn = engine.connect()
+    
+  # Fetch distinct school names
+  cursor = conn.execute(text("SELECT DISTINCT school_name FROM school"))
+  schools = [school[0] for school in cursor]
+
+  # Fetch distinct dining hall names
+  cursor = conn.execute(text("SELECT DISTINCT dining_hall_name FROM dining_hall"))
+  dining_halls = [hall[0] for hall in cursor]
+
+  # Fetch distinct cafe names
+  cursor = conn.execute(text("SELECT DISTINCT cafe_name FROM cafes"))
+  cafes = [cafe[0] for cafe in cursor]
+
+  # Fetch distinct food cart names
+  cursor = conn.execute(text("SELECT DISTINCT foodcart_name FROM food_cart"))
+  food_carts = [food_cart[0] for food_cart in cursor]
+
+  # Close the connection
+  conn.close()
+
+  # Combine all the lists
+  locations = schools + dining_halls + cafes + food_carts
+  return locations
+
+def get_reviews_for_location(location_name):
+    conn = engine.connect()
+
+    # Construct a query to find reviews for locations containing the user's input
+    query = """
+        SELECT r.rid, r.opinion, r.stars, r.meal_type
+        FROM (
+            SELECT rp.rid
+            FROM ref_p rp
+            JOIN places_to_eat p ON rp.pid = p.pid
+            LEFT JOIN school s ON p.sid = s.sid
+            LEFT JOIN dining_hall d ON p.pid = d.pid
+            LEFT JOIN cafes c ON p.pid = c.pid  
+            WHERE 
+                s.school_name LIKE :location_name OR
+                d.dining_hall_name LIKE :location_name OR
+                c.cafe_name LIKE :location_name
+            UNION
+            SELECT rf.rid
+            FROM ref_f rf
+            JOIN food_cart f ON rf.fid = f.fid
+            WHERE 
+                f.foodcart_name LIKE :location_name
+        ) matched_reviews
+        JOIN review r ON matched_reviews.rid = r.rid
+    """
+
+    cursor = conn.execute(text(query), {"location_name": f"%{location_name}%"})
+    result = cursor.fetchall()
+
+    conn.close()
+
+    return result
 
 # To make the queries run, we need to add this commit line
 #conn.commit() 
@@ -73,7 +129,6 @@ def teardown_request(exception):
     g.conn.close()
   except Exception as e:
     pass
-
 
 #
 # @app.route is a decorator around index() that means:
@@ -106,14 +161,108 @@ def index():
   #
   # example of a database query 
   #
-  #cursor = g.conn.execute(text("SELECT name FROM test"))
-  #g.conn.commit()
 
   #trying to display all the reviews and their attributes 
   #result = engine.execute("SELECT * FROM review")
   #reviews = result.fetchall() #returns all tuples
 
-  cursor = g.conn.execute(text("SELECT opinion, stars, meal_type FROM review")) #JOIN 
+
+  # Indexing result by column number
+  names = [result[0] for result in cursor]
+  cursor.close()
+
+  # Get the list of schools and their corresponding sids
+  locations = get_locations()
+
+  # Get the selected school and its associated dietary need
+  selected_location = request.args.get('selected_location')
+  print(selected_location)
+
+  result = []
+
+  
+  if selected_location:
+    location_name = selected_location
+    conn = engine.connect()
+
+    # Check if the location exists in each table
+    check_school_query = "SELECT 1 FROM school WHERE school_name = :location_name LIMIT 1"
+    check_cafe_query = "SELECT 1 FROM cafes WHERE cafe_name = :location_name LIMIT 1"
+    check_dining_hall_query = "SELECT 1 FROM dining_hall WHERE dining_hall_name = :location_name LIMIT 1"
+    check_food_cart_query = "SELECT 1 FROM food_cart WHERE foodcart_name = :location_name LIMIT 1"
+
+    # Determine the type of location
+    if conn.execute(text(check_school_query), {"location_name": location_name}).fetchone():
+      location_type = 'school'
+    elif conn.execute(text(check_cafe_query), {"location_name": location_name}).fetchone():
+      location_type = 'cafe'
+    elif conn.execute(text(check_dining_hall_query), {"location_name": location_name}).fetchone():
+      location_type = 'dining_hall'
+    elif conn.execute(text(check_food_cart_query), {"location_name": location_name}).fetchone():
+      location_type = 'food_cart'
+    else:
+      location_type = None
+
+      # Construct the query based on the location type
+    if location_type:
+      if location_type.lower() == 'school':
+        query = """
+            SELECT r.rid, r.opinion, r.stars, r.meal_type
+            FROM school s
+            JOIN places_to_eat p ON s.sid = p.sid
+            JOIN ref_p rp ON p.pid = rp.pid
+            JOIN review r ON rp.rid = r.rid
+            WHERE s.school_name = :location_name
+        """
+      elif location_type.lower() == 'cafe':
+        query = """
+            SELECT r.rid, r.opinion, r.stars, r.meal_type
+            FROM cafes c
+            JOIN places_to_eat p ON c.pid = p.pid
+            JOIN ref_p rp ON p.pid = rp.pid
+            JOIN review r ON rp.rid = r.rid
+            WHERE c.cafe_name = :location_name
+        """
+      elif location_type.lower() == 'dining_hall':
+        query = """
+            SELECT r.rid, r.opinion, r.stars, r.meal_type
+            FROM dining_hall d
+            JOIN places_to_eat p ON d.pid = p.pid
+            JOIN ref_p rp ON p.pid = rp.pid
+            JOIN review r ON rp.rid = r.rid
+            WHERE d.dining_hall_name = :location_name
+        """
+      elif location_type.lower() == 'food_cart':
+        query = """
+            SELECT r.rid, r.opinion, r.stars, r.meal_type
+            FROM food_cart f
+            JOIN ref_f rf ON f.fid = rf.fid
+            JOIN review r ON rf.rid = r.rid
+            WHERE f.foodcart_name = :location_name
+        """
+
+      cursor = conn.execute(text(query), {"location_name": location_name})
+      result = cursor.fetchall()
+
+     #conn.close()
+
+      print(result)
+    else:
+      print("Invalid location:", selected_location)
+  else:
+    print("Invalid selected_location:", selected_location)
+
+
+  context = {
+    'data': names,
+    'locations': locations,
+    'selected_location': selected_location,
+    'reviews': result
+  }
+
+
+  #To Display ALL REVIEWS on index.html
+  cursor = g.conn.execute(text("SELECT opinion, stars, meal_type FROM review")) 
   g.conn.commit()
   
   # Fetchs all results as a list of lists
@@ -122,7 +271,8 @@ def index():
   # Don't forget to close the cursor
   cursor.close()
 
-  return render_template('index.html', all_reviews=all_reviews)
+  #returning all reviews and context 
+  return render_template('index.html', all_reviews=all_reviews, **context)
 
 
   #
@@ -141,6 +291,20 @@ def index():
   # for example, the below file reads template/index.html
   #
   #return render_template("index.html", **context)
+
+
+
+#for Searching
+@app.route('/search')
+def search():
+  search_place = request.args.get('search_place')
+
+  if search_place:
+    # Handle the search query and retrieve reviews for the searched location
+    result = get_reviews_for_location(search_place)
+    return render_template("search_results.html", location=search_place, reviews=result)
+
+  return redirect('/')
 
 #
 # This is an example of a different path.  You can see it at:
@@ -244,6 +408,10 @@ def add_review():
   conn.close()
 
   return render_template('another.html', user_reviews=user_reviews) 
+
+
+
+
 
 
 #@app.route('/login')

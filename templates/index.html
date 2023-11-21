@@ -10,62 +10,48 @@
 <body>
   <h1>uniMunch</h1>
   <header class = "page-header"> 
-    <!--<p><a href="another">Go to the other page</a></p> takes you to the other html file-->
-    <form class="searchForm" action="another.html" method="GET">
-      <input type="text" id="searchInput" name="search_place" placeholder="Search for a place">
+    <form id="searchForm" action="/search" method="GET">
+      <input type="text" id="searchInput" name="search_place" placeholder="Enter a location name">
       <button class = "search-b" type = "submit" value="Search">Search</button> <!--search button--> 
       <!--<input type="submit" value="search"></p>-->
     </form>
   </header>
 
+ 
+  
   <header class = "write_rev-b">
     <form action = "/create_revpg" method="GET">
       <button class = "write-rev" type = "submit">Write a Review</button> <!--write review button-->
     </form> 
   </header>
+  
+  
+  <form method="GET" action="/">
+    <label for="location">Select a location:</label>
+    <select id="location" name="selected_location">
+      {% for location in locations %}
+        <option value="{{ location }}">
+          {{ location }}
+        </option>
+      {% endfor %}
+      
+      
+  {% if reviews %}
+    <h2>Reviews for {{ selected_location.split(':')[0] if selected_location else 'Unknown Location' }}</h2>
+    <ul>
+      {% for review in reviews %}
+        <li>
+          <strong>Opinion:</strong> {{ review.opinion }}<br>
+          <strong>Stars:</strong> {{ review.stars }}<br>
+          <strong>Meal Type:</strong> {{ review.meal_type }}<br>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No reviews available for {{ selected_location.split(':')[0] if selected_location else 'Unknown Location' }}</p>
+  {% endif %}
 
-  <form class="filterForm" method="POST" action="/add"> 
-    <label for="filter">Filter:</label>
-    <select id="filter" name="filter">
-      <!--<option value="Filter">Filter</option>-->
-      <option value="Halal">Halal</option>
-      <option value="Vegan/Vegetarian">Vegan/Vegetarian</option>
-      <option value="Gluten-free">Gluten-free</option>
-      <option value="Kosher">Kosher</option>
-      <option value="Dairy-Free">Dairy-Free</option>
-      <option value="Breakfast">Breakfast</option>
-      <option value="Lunch">Lunch</option>
-      <option value="Dinner">Dinner</option>
-      <option value="Most Popular">Most Popular</option>
-      <optgroup label="Most Popular">
-        <option value="Barnard College">Barnard College</option>
-        <option value="Columbia College">Columbia College</option>
-        <option value="SEAS College">SEAS College</option>
-        <option value="Teacher's College">Teacher's College</option>
-        <option value="School of Social Work">School of Social Work</option>
-        <option value="Columbia Business School">Columbia Business School</option>
-        <option value="Columbia Law School">Columbia Law School</option>
-        <option value="Graduate School">Graduate School</option>
-        <option value="Columbia Journalism">Columbia Journalism</option>
-        <option value="Dental School of Columbia">Dental School of Columbia</option>
-      </optgroup>
-
-    </select>
-
-  </form>
-
-
-  <!--<form method="GET" action = "/">-->
-    <!--<input type="text" name="allrev">-->
-  <!---</form>
-  <h2>All Reviews:</h2>
-  <ul>
-    {% for review in reviews %}
-      <li>Stars: {{ review.stars }} </li>
-      <li>Meal Type: {{ review.meal_type }} </li>
-      <li>Opinion: {{ review.opinion }} </li>
-    {% endfor %}
-  </ul>-->
+ 
 
   <h2>All Reviews</h2>
     <table>
@@ -85,5 +71,5 @@
      
 </body>
 
-
 </html>
+
