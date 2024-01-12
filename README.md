@@ -1,32 +1,3 @@
-PostgreSQL Account Information
-
-The PostgreSQL account for the database on the server resides under the following credentials:
-
-Username: mzn2002
-Password: 143318
-Database: proj1part2
-Host: 34.74.171.121
-
-The web application is accessible at the following URL: http://35.243.155.255:8111/
-
-Parts Implemented from the Original Proposal (Part 1)
-Database Schema and Tables: Implemented the proposed database schema with tables such as school, dining_hall, cafes, food_cart, web_feedback_suggests, visits, goes_to, places_to_eat, ref_p, ref_f, review, our_user, and review_leaves.
-
-Web Server and Routes: Created a Flask web server with routes for the home page, search functionality, review functionality, creating a web feedback functionality,
-going to the review page, and going to the web feedback page.
-
-Database Interaction: Implemented database interactions for retrieving and displaying reviews based on selected locations. Updated the database during the creation of new reviews and during the creation of website feedback.
-
-Parts Not Implemented from the Original Proposal (Part 1)
-All parts of the original proposal were implemented as planned.
-
-New Features Added:
-We enhanced the aesthetic of the website for better user functionality. 
-
-Non-Implemented Parts and Reasons
-All proposed parts were implemented.
-
-Interesting Web Pages and Database Operations:
 Home Page:
 Purpose: Displays a list of names from the test table and provides a dropdown menu to select a location (school, dining hall, cafe, or food cart).
 Database Operations: Retrieves names from the test table and reviews based on the selected location from various tables.
